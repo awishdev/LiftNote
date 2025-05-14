@@ -21,4 +21,16 @@ class User(db.Model, SerializerMixin):
 
 #category model with id, name, and exercise associations
 
+class Category(db.Model, SerializerMixin):
+    __tablename__ = 'categories'
+
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(100), nullable=False)
+
+    exercises = db.relationship('Exercise', backref='category', cascade='all, delete-orphan')
+
+    def __init__(self, name):
+        self.name = name
+
+
 # exercise model with id, name, description, and category_id, and user_exercise associations
