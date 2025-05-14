@@ -99,6 +99,40 @@ class ExercisesResource(Resource):
         db.session.add(exercise)
         db.session.commit()
         return exercise.to_dict(), 201
+    
+
+class ExerciseResource(Resource):
+    def patch(self, id):
+        user_id = session.get('user_id')
+        exercise = Exercise.query.get_or_404(id)
+        if not user_id or exercise.user_id != user_id:
+            return {'error': 'Unauthorized'}, 401
+
+        data = request.get_json()
+        if 'name' in data:
+            exercise.name = data['name']
+        if 'record' in data:
+            exercise.record = data['record']
+        if 'date' in data:
+            exercise.date = datetime.strptime(data['date'], '%Y-%m-%d')
+        if 'category_id' in data:
+            exercise.category_id = data['category_id']
+
+        db.session.commit()
+        return exercise.to_dict(), 200
+    def delete(self, id):
+        user_id = session.get('user_id')
+        exercise = Exercise.query.get_or_404(id)
+        if not user_id or exercise.user_id != user_id:
+            return {'error': 'Unauthorized'}, 401
+
+        db.session.delete(exercise)
+        db.session.commit()
+        return '', 204
+
+
+api.add_resource(ExercisesResource, '/exercises')
+api.add_resource(ExerciseResource, '/exercises/<int:id>')
 
 
 api.add_resource(CategoriesResource, '/categories')
