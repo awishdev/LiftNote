@@ -59,6 +59,28 @@ class CategoriesResource(Resource):
         db.session.add(category)
         db.session.commit()
         return category.to_dict(), 201
+    
+class ExercisesResource(Resource):
+    def get(self):
+        # only return the logged-in user's exercises, grouped by category
+        user_id = session.get('user_id')
+        if not user_id:
+            return {'error': 'Unauthorized'}, 401
+
+        grouped = []
+        categories = Category.query.all()
+        for cat in categories:
+            ex_list = Exercise.query.filter_by(
+                user_id=user_id,
+                category_id=cat.id
+            ).all()
+            if ex_list:
+                grouped.append({
+                    'category': cat.to_dict(),
+                    'exercises': [e.to_dict() for e in ex_list]
+                })
+
+        return grouped, 200
 
 
 api.add_resource(CategoriesResource, '/categories')
