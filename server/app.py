@@ -37,6 +37,34 @@ class CheckSession(Resource):
             return user.to_dict(), 200
         return {'error': 'Unauthorized'}, 401
     
+class Register(Resource):
+    def post(self):
+        data = request.get_json()
+        user = User(username=data['username'])
+        user.password_hash = data['password']
+        db.session.add(user)
+        db.session.commit()
+        session['user_id'] = user.id
+        return user.to_dict(), 201
+    
+
+class CategoriesResource(Resource):
+    def get(self):
+        categories = Category.query.all()
+        return [c.to_dict() for c in categories], 200
+
+    def post(self):
+        data = request.get_json()
+        category = Category(name=data['name'])
+        db.session.add(category)
+        db.session.commit()
+        return category.to_dict(), 201
+
+
+api.add_resource(CategoriesResource, '/categories')
+
+api.add_resource(Register, '/register')
+    
 
 api.add_resource(Login, '/login')
 api.add_resource(Logout, '/logout')
