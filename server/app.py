@@ -81,6 +81,24 @@ class ExercisesResource(Resource):
                 })
 
         return grouped, 200
+    
+
+    def post(self):
+        user_id = session.get('user_id')
+        if not user_id:
+            return {'error': 'Unauthorized'}, 401
+
+        data = request.get_json()
+        exercise = Exercise(
+            name=data['name'],
+            record=data['record'],
+            date=datetime.strptime(data['date'], '%Y-%m-%d'),
+            user_id=user_id,
+            category_id=data['category_id']
+        )
+        db.session.add(exercise)
+        db.session.commit()
+        return exercise.to_dict(), 201
 
 
 api.add_resource(CategoriesResource, '/categories')
