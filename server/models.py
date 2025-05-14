@@ -1,7 +1,8 @@
 from sqlalchemy_serializer import SerializerMixin
 from sqlalchemy.ext.associationproxy import association_proxy
+from sqlalchemy.ext.hybrid import hybrid_property
 
-from config import db
+from config import db, bcrypt
 
 # Models go here!
 
@@ -11,13 +12,29 @@ class User(db.Model, SerializerMixin):
 
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(100), unique=True, nullable=False)
-    password = db.Column(db.String(100), nullable=False)
+    _password_hash = db.Column(db.String(200), nullable=False)
 
+    # Relationships
     exercises = db.relationship('Exercise', backref='user', cascade='all, delete-orphan')
 
-    def __init__(self, username, password):
-        self.username = username
-        self.password = password
+    # Serializer settings
+    serialize_rules = ('-password_hash', '-_password_hash', '-exercises.user')
+
+    def __repr__(self):
+        return f'<User {self.username}>'
+
+    @hybrid_property
+    def password_hash(self):
+        return self._password_hash
+
+    @password_hash.setter
+    def password_hash(self, password):
+        hashed = bcrypt.generate_password_hash(password.encode('utf-8'))
+        self._password_hash = hashed.decode('utf-8')
+
+    def authenticate(self, password):
+        return bcrypt.check_password_hash(
+            self._password_hash, password.encode('utf-8'))
 
 #category model with id, name, and exercise associations
 
