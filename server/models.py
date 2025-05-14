@@ -34,3 +34,21 @@ class Category(db.Model, SerializerMixin):
 
 
 # exercise model with id, name, description, and category_id, and user_exercise associations
+
+class Exercise(db.Model, SerializerMixin):
+    __tablename__ = 'exercises'
+
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(100), nullable=False)  # e.g., "Bench Press"
+    record = db.Column(db.String(500), nullable=False)  # e.g., "200 lbs", "5km in 25min"
+    date = db.Column(db.Date, nullable=False)
+
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    category_id = db.Column(db.Integer, db.ForeignKey('categories.id'), nullable=False)
+
+    def __init__(self, name, record, date, user_id, category_id):
+        self.name = name
+        self.record = record
+        self.date = date
+        self.user_id = user_id
+        self.category_id = category_id
