@@ -40,17 +40,7 @@ export default function App() {
   //add function to add a new exercise to state
   function addExercise(newExercise) {
     console.log('Adding exercise:', newExercise)
-    /*
-    const exerciseToAdd = {
-      "id": newExercise.value.id, 
-      "name": newExercise.value.name, 
-      "record": newExercise.value.record, 
-      "date": newExercise.value.date, 
-      "category_id": newExercise.value.category_id, 
-      "category": newExercise.value.category
-    }
-    console.log(exerciseToAdd);
-    console.log(exercises);*/
+    
     setExercises([...exercises, newExercise]);
   }
 
