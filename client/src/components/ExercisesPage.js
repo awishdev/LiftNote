@@ -4,8 +4,8 @@ import ExerciseCard from './ExerciseCard'
 
 export default function ExercisesPage({ cats, exerciseRecords, setExerciseRecords }) {
   const [openCatId, setOpenCatId] = useState(null)
-  console.log('Exercise Records:', exerciseRecords)
-  // Handler to delete via API + update state
+  //console.log('Exercise Records:', exerciseRecords)
+  // Handler to delete via API and update state
   const handleDelete = async (id) => {
     await fetch(`/exercises/${id}`, {
       method: 'DELETE',
@@ -14,7 +14,7 @@ export default function ExercisesPage({ cats, exerciseRecords, setExerciseRecord
     setExerciseRecords(prev => prev.filter(e => e.id !== id))
   }
 
-  // Handler to patch via API + update state
+  // Handler to patch via API and update state
   const handleEdit = async (id, updates) => {
     const res = await fetch(`/exercises/${id}`, {
       method: 'PATCH',
