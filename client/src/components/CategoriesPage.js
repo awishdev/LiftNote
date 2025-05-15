@@ -3,15 +3,17 @@ import React, { useState, useEffect } from 'react'
 import { useFormik } from 'formik'
 import * as Yup from 'yup'
 
-export default function CategoriesPage() {
-  const [cats, setCats] = useState([])
+export default function CategoriesPage({cats, setCats}) {
+  //const [cats, setCats] = useState([])
 
   // load existing categories
+  /* refactored away
   useEffect(() => {
     fetch('/categories', { credentials: 'include' })
       .then(r => r.json())
       .then(setCats)
-  }, [])
+      .then(console.log("cats get"))
+  }, [])*/
 
   // Formik for new‐category form
   const formik = useFormik({
@@ -40,6 +42,7 @@ export default function CategoriesPage() {
         setErrors({ name: err.message })
       } finally {
         setSubmitting(false)
+        console.log("cat post")
       }
     },
   })

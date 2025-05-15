@@ -46,6 +46,9 @@ class Category(db.Model, SerializerMixin):
 
     exercises = db.relationship('Exercise', backref='category', cascade='all, delete-orphan')
 
+    serialize_rules = ('-exercises',)
+
+
     def __init__(self, name):
         self.name = name
 
@@ -63,6 +66,7 @@ class Exercise(db.Model, SerializerMixin):
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     category_id = db.Column(db.Integer, db.ForeignKey('categories.id'), nullable=False)
 
+    serialize_rules = ('-category.exercises', '-user.exercises')
     def __init__(self, name, record, date, user_id, category_id):
         self.name = name
         self.record = record

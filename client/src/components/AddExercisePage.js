@@ -3,15 +3,17 @@ import { useFormik } from 'formik'
 import * as Yup from 'yup'
 import { useNavigate } from 'react-router-dom'
 
-export default function AddExercisePage() {
-  const [categories, setCategories] = useState([])
+export default function AddExercisePage({cats, onAdd}) {
+  //const [categories, setCategories] = useState([])
   const navigate = useNavigate()
-
+  /* refactored away
   useEffect(() => {
     fetch('/categories', { credentials: 'include' })
       .then(r => r.json())
       .then(setCategories)
-  }, [])
+  }, [])*/
+
+  console.log('Categories:', cats)
 
   const formik = useFormik({
     initialValues: {
@@ -33,7 +35,10 @@ export default function AddExercisePage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(values)
       })
-      if (res.ok) navigate('/exercises')
+      if (res.ok) {
+        onAdd(res.json())
+        navigate('/exercises')
+      }
     },
   })
 
@@ -75,7 +80,7 @@ export default function AddExercisePage() {
         onBlur={formik.handleBlur}
       >
         <option value="">Select Category</option>
-        {categories.map(c => (
+        {cats.map(c => (
           <option key={c.id} value={c.id}>{c.name}</option>
         ))}
       </select>

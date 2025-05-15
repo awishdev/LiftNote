@@ -5,6 +5,7 @@
 # Remote library imports
 from flask import request, session
 from flask_restful import Resource
+from datetime import datetime
 
 # Local imports
 from config import app, db, api
@@ -34,7 +35,11 @@ class CheckSession(Resource):
         user_id = session.get('user_id')
         if user_id:
             user = User.query.get(user_id)
-            return user.to_dict(), 200
+            categories = Category.query.all()
+            return {
+                'user': user.to_dict(),
+                'categories': [c.to_dict() for c in categories]
+            }, 200
         return {'error': 'Unauthorized'}, 401
     
 class Register(Resource):
@@ -133,13 +138,8 @@ class ExerciseResource(Resource):
 
 api.add_resource(ExercisesResource, '/exercises')
 api.add_resource(ExerciseResource, '/exercises/<int:id>')
-
-
 api.add_resource(CategoriesResource, '/categories')
-
 api.add_resource(Register, '/register')
-    
-
 api.add_resource(Login, '/login')
 api.add_resource(Logout, '/logout')
 api.add_resource(CheckSession, '/check_session')

@@ -27,6 +27,7 @@ export default function LoginSignupPage({ onLogin }) {
         setErrors({ submit: err.message })
       } finally {
         setSubmitting(false)
+        console.log("login fetch")
       }
     }
   })
