@@ -21,6 +21,7 @@ class Login(Resource):
         data = request.get_json()
         user = User.query.filter_by(username=data.get('username')).first()
         if user and user.authenticate(data.get('password')):
+            # return full info to limit get requests
             session['user_id'] = user.id
             categories = Category.query.all()
             return {
@@ -38,6 +39,7 @@ class CheckSession(Resource):
     def get(self):
         user_id = session.get('user_id')
         if user_id:
+            # get full info to limit get requests
             user = User.query.get(user_id)
             categories = Category.query.all()
             return {
