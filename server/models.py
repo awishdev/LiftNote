@@ -16,6 +16,7 @@ class User(db.Model, SerializerMixin):
 
     # Relationships
     exercises = db.relationship('Exercise', backref='user', cascade='all, delete-orphan')
+    categories = association_proxy('exercises', 'category')
 
     # Serializer settings
     serialize_rules = ('-password_hash', '-_password_hash', '-exercises.user')

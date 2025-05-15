@@ -24,8 +24,13 @@ class Login(Resource):
             # return full info to limit get requests
             session['user_id'] = user.id
             categories = Category.query.all()
+            raw_cats = user.categories
+            unique_cats = {c.id: c for c in raw_cats}.values()
+            user_cats = [c.to_dict() for c in unique_cats]
+            user_data = user.to_dict()
+            user_data['categories'] = user_cats
             return {
-                'user': user.to_dict(),
+                'user': user_data,
                 'categories': [c.to_dict() for c in categories]
             }, 200
         return {'error': 'Invalid username or password'}, 401
@@ -42,8 +47,13 @@ class CheckSession(Resource):
             # get full info to limit get requests
             user = User.query.get(user_id)
             categories = Category.query.all()
+            raw_cats = user.categories
+            unique_cats = {c.id: c for c in raw_cats}.values()
+            user_cats = [c.to_dict() for c in unique_cats]
+            user_data = user.to_dict()
+            user_data['categories'] = user_cats
             return {
-                'user': user.to_dict(),
+                'user': user_data,
                 'categories': [c.to_dict() for c in categories]
             }, 200
         return {'error': 'Unauthorized'}, 401

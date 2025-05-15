@@ -15,6 +15,7 @@ import AddExercisePage from './AddExercisePage'
 export default function App() {
   const [exercises, setExercises] = useState([])
   const [categories, setCategories] = useState([])
+  const [userCategories, setUserCategories] = useState([])
   const [user, setUser] = useState(null)
   useEffect(() => {
     fetch('/check_session', { credentials: 'include' })
@@ -23,6 +24,7 @@ export default function App() {
         setUser(data);
         setExercises(data.user.exercises);
         setCategories(data.categories);
+        setUserCategories(data.user.categories)
         //debugger;
       }
         console.log('User is logged in:', data);
@@ -53,7 +55,7 @@ export default function App() {
             <NavBar onLogout={() => setUser(null)} />
             <Routes>
               <Route path="/" element={<CategoriesPage cats={categories} setCats={setCategories}/>} />
-              <Route path="/exercises" element={<ExercisesPage cats={categories} exerciseRecords={exercises} setExerciseRecords={setExercises}/>} />
+              <Route path="/exercises" element={<ExercisesPage cats={userCategories} exerciseRecords={exercises} setExerciseRecords={setExercises}/>} />
               <Route path="/add" element={<AddExercisePage cats={categories} onAdd={addExercise}/>} />
               {/* catch‐all redirects back home */}
               <Route path="*" element={<Navigate to="/" replace />} />
