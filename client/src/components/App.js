@@ -16,7 +16,7 @@ export default function App() {
   const [exercises, setExercises] = useState([])
   const [categories, setCategories] = useState([])
   const [user, setUser] = useState(null)
-    useEffect(() => {
+  useEffect(() => {
     fetch('/check_session', { credentials: 'include' })
       .then(res => res.json())
       .then(data => { if (!data.error) {
@@ -64,7 +64,7 @@ export default function App() {
               path="/login"
               element={<LoginSignupPage onLogin={loginDataHandler} />}
             />
-            {/* any other path → login */}
+            {/* any other path to login */}
             <Route path="*" element={<Navigate to="/login" replace />} />
           </Routes>
       }
