@@ -39,7 +39,7 @@ export default function App() {
 
   //add function to add a new exercise to state
   function addExercise(newExercise) {
-    console.log('Adding exercise:', newExercise)
+    //console.log('Adding exercise:', newExercise)
     
     setExercises([...exercises, newExercise]);
   }

@@ -42,7 +42,7 @@ export default function CategoriesPage({cats, setCats}) {
         setErrors({ name: err.message })
       } finally {
         setSubmitting(false)
-        console.log("cat post")
+        //console.log("cat post")
       }
     },
   })

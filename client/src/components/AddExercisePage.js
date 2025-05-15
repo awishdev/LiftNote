@@ -13,8 +13,8 @@ export default function AddExercisePage({cats, onAdd}) {
       .then(setCategories)
   }, [])*/
 
-  console.log('Categories:', cats)
-
+  //console.log('Categories:', cats)
+// Formik for new exercise form
   const formik = useFormik({
     initialValues: {
       name: '',
@@ -22,6 +22,7 @@ export default function AddExercisePage({cats, onAdd}) {
       date: '',
       category_id: ''
     },
+    // Validation schema for form inputs
     validationSchema: Yup.object({
       name:        Yup.string().max(100).required('Required'),
       record:      Yup.string().max(100).required('Required'),
