@@ -4,6 +4,19 @@ This app allows the user to create a login and track all of their fitness record
 This README gives a brief overview of the main backend (Python) and frontend (React/JSX) files in this project.
 
 ---
+## Installation
+
+--Clone the repo and run the following
+
+>npm install --prefix client
+>pipenv install --prefix server
+>npm start --prefix server
+
+--In a second terminal
+>pipenv shell
+>python server/app.py
+
+
 
 ## Backend
 
