@@ -22,7 +22,11 @@ class Login(Resource):
         user = User.query.filter_by(username=data.get('username')).first()
         if user and user.authenticate(data.get('password')):
             session['user_id'] = user.id
-            return user.to_dict(), 200
+            categories = Category.query.all()
+            return {
+                'user': user.to_dict(),
+                'categories': [c.to_dict() for c in categories]
+            }, 200
         return {'error': 'Invalid username or password'}, 401
 
 class Logout(Resource):

@@ -36,7 +36,8 @@ export default function AddExercisePage({cats, onAdd}) {
         body: JSON.stringify(values)
       })
       if (res.ok) {
-        onAdd(res.json())
+        const data = await res.json()
+        onAdd(data)
         navigate('/exercises')
       }
     },
