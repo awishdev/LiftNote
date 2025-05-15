@@ -44,6 +44,14 @@ export default function App() {
     //console.log('Adding exercise:', newExercise)
     
     setExercises([...exercises, newExercise]);
+
+    const catObj = categories.find(c => c.id === newExercise.category_id )
+
+    setUserCategories(prev => 
+    prev.some(c=>c.id===newExercise.category.id)
+      ? prev
+      : [...prev, catObj]
+    )
   }
 
 

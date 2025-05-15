@@ -6,16 +6,22 @@ This README gives a brief overview of the main backend (Python) and frontend (Re
 ---
 ## Installation
 
---Clone the repo and run the following
+  --Clone the repo and run the following
 
->npm install --prefix client
->pipenv install --prefix server
->npm start --prefix server
+    >npm install --prefix client
+    >pipenv install --prefix server
+    >npm start --prefix server
 
---In a second terminal
->pipenv shell
->python server/app.py
+  --In a second terminal
+  
+    >pipenv shell
+    >python server/app.py
 
+## Usage
+  Create a user login
+  Add exercise categories as needed
+  Use the form to add exercise records
+  View records and edit or delete them
 
 
 ## Backend
@@ -25,8 +31,7 @@ This README gives a brief overview of the main backend (Python) and frontend (Re
 
 - **app.py**  
   Defines the Flask-RESTful resources and routes for:  
-  - **Auth**: `/login`, `/register`, `/logout`, `/check_session`  
-  - **Dashboard**: `/dashboard` (user + categories + grouped exercises)  
+  - **Auth**: `/login`, `/register`, `/logout`, `/check_session`    
   - **Categories**: GET/POST `/categories`  
   - **Exercises**: GET/POST `/exercises` and GET/PUT/DELETE `/exercises/<id>`  
 
