@@ -1,6 +1,9 @@
 import { useFormik } from 'formik'
+import React, { useState } from 'react'
+import * as Yup from 'yup'
 
-function LoginSignupPage({ onLogin }) {
+
+export default function LoginSignupPage({ onLogin }) {
   const [isLogin, setIsLogin] = useState(true)
 
   const formik = useFormik({

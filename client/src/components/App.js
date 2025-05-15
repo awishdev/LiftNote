@@ -1,4 +1,4 @@
-import React from 'react'
+import React, {useEffect, useState} from 'react'
 import {
   BrowserRouter,
   Routes,
@@ -6,13 +6,21 @@ import {
   Navigate
 } from 'react-router-dom'
 
-import NavBar from './components/NavBar'
-import LoginSignupPage from './components/LoginSignupPage'
-import CategoriesPage from './components/CategoriesPage'
-import ExercisesPage from './components/ExercisesPage'
-import AddExercisePage from './components/AddExercisePage'
+import NavBar from './NavBar'
+import LoginSignupPage from './LoginSignupPage'
+import CategoriesPage from './CategoriesPage'
+import ExercisesPage from './ExercisesPage'
+import AddExercisePage from './AddExercisePage'
 
-export default function App({ user, setUser }) {
+export default function App() {
+
+  const [user, setUser] = useState(null)
+    useEffect(() => {
+    fetch('/check_session', { credentials: 'include' })
+      .then(res => res.json())
+      .then(data => { if (!data.error) setUser(data); });
+  }, []);
+
   return (
     <BrowserRouter>
       {user
