@@ -23,9 +23,9 @@ export default function AddExercisePage({cats, onAdd}) {
       category_id: ''
     },
     validationSchema: Yup.object({
-      name:        Yup.string().required('Required'),
-      record:      Yup.string().required('Required'),
-      date:        Yup.date().required('Required'),
+      name:        Yup.string().max(100).required('Required'),
+      record:      Yup.string().max(100).required('Required'),
+      date:        Yup.date().max(new Date(), 'Date cannot be in the future').required('Required'),
       category_id: Yup.number().required('Required'),
     }),
     onSubmit: async (values) => {

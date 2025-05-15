@@ -5,9 +5,13 @@ import * as Yup from 'yup'
 
 export default function LoginSignupPage({ onLogin }) {
   const [isLogin, setIsLogin] = useState(true)
-
+  // set up formik with initial values and validation schema
   const formik = useFormik({
     initialValues: { username: '', password: '' },
+    validationSchema: Yup.object({
+      username: Yup.string().min(3).required('Username is required'),
+      password: Yup.string().min(3).required('Password is required'),
+    }),
     onSubmit: async (values, { setSubmitting, setErrors }) => {
       try {
         const endpoint = isLogin ? '/login' : '/register'
