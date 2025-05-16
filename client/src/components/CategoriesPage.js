@@ -4,18 +4,17 @@ import { useFormik } from 'formik'
 import * as Yup from 'yup'
 
 export default function CategoriesPage({cats, setCats}) {
-  //const [cats, setCats] = useState([])
+
 
   // load existing categories
-  /* refactored away
+
   useEffect(() => {
     fetch('/categories', { credentials: 'include' })
       .then(r => r.json())
-      .then(setCats)
-      .then(console.log("cats get"))
-  }, [])*/
+      .then(d => setCats(d))
+  }, [])
 
-  // Formik for new‐category form
+  // formik for new‐category form
   const formik = useFormik({
     initialValues: { name: '' },
     validationSchema: Yup.object({
@@ -51,7 +50,6 @@ export default function CategoriesPage({cats, setCats}) {
     <div>
       <h1>All Categories</h1>
 
-      {/* New Category Form */}
       <form onSubmit={formik.handleSubmit} style={{ marginBottom: 20 }}>
         <input
           id="name"
@@ -70,10 +68,9 @@ export default function CategoriesPage({cats, setCats}) {
         )}
       </form>
 
-      {/* Category List */}
       <ul>
         {cats.map(c => (
-          <li key={c.id}>{c.name}</li>
+          <li className='cats' key={c.id}>{c.name}</li>
         ))}
       </ul>
     </div>

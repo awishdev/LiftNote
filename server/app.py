@@ -23,17 +23,44 @@ class Login(Resource):
         if user and user.authenticate(data.get('password')):
             # return full info to limit get requests
             session['user_id'] = user.id
-            categories = Category.query.all()
-            raw_cats = user.categories
-            unique_cats = {c.id: c for c in raw_cats}.values()
-            user_cats = [c.to_dict() for c in unique_cats]
-            user_data = user.to_dict()
-            user_data['categories'] = user_cats
-            return {
-                'user': user_data,
-                'categories': [c.to_dict() for c in categories]
+
+        all_exs = user.exercises
+
+        # build a dict mapping category_id to category dict
+        buckets = {}
+        for ex in all_exs:
+            cid = ex.category_id
+            if cid not in buckets:
+                cat_dict = ex.category.to_dict()
+                cat_dict['exercises'] = []
+                buckets[cid] = cat_dict
+
+            buckets[cid]['exercises'].append(ex.to_dict())
+
+        # turn the buckets into a list of category objects
+        nested_cats = list(buckets.values())
+
+        # make the user response
+        user_data = user.to_dict()
+        user_data.pop('exercises', None)
+        user_data['categories'] = nested_cats
+        all_cats = Category.query.all()
+
+        return { 
+            'user': user_data,
+            'categories': [c.to_dict() for c in all_cats]
             }, 200
-        return {'error': 'Invalid username or password'}, 401
+        #     categories = Category.query.all()
+        #     raw_cats = user.categories
+        #     unique_cats = {c.id: c for c in raw_cats}.values()
+        #     user_cats = [c.to_dict() for c in unique_cats]
+        #     user_data = user.to_dict()
+        #     user_data['categories'] = user_cats
+        #     return {
+        #         'user': user_data,
+        #         'categories': [c.to_dict() for c in categories]
+        #     }, 200
+        # return {'error': 'Invalid username or password'}, 401
 
 class Logout(Resource):
     def delete(self):
@@ -45,18 +72,57 @@ class CheckSession(Resource):
         user_id = session.get('user_id')
         if user_id:
             # get full info to limit get requests
-            user = User.query.get(user_id)
-            categories = Category.query.all()
-            raw_cats = user.categories
-            unique_cats = {c.id: c for c in raw_cats}.values()
-            user_cats = [c.to_dict() for c in unique_cats]
-            user_data = user.to_dict()
-            user_data['categories'] = user_cats
-            return {
-                'user': user_data,
-                'categories': [c.to_dict() for c in categories]
+            from flask_restful import Resource
+from flask import session
+from models import User
+
+class CheckSession(Resource):
+    def get(self):
+        user_id = session.get('user_id')
+        if not user_id:
+            return {'error': 'Unauthorized'}, 401
+
+        user = User.query.get_or_404(user_id)
+        all_exs = user.exercises
+
+        # build a dict mapping category_id to category dict
+        buckets = {}
+        for ex in all_exs:
+            cid = ex.category_id
+            if cid not in buckets:
+                cat_dict = ex.category.to_dict()
+                cat_dict['exercises'] = []
+                buckets[cid] = cat_dict
+
+            buckets[cid]['exercises'].append(ex.to_dict())
+
+        # turn the buckets into a list of category objects
+        nested_cats = list(buckets.values())
+
+        # make the user response
+        user_data = user.to_dict()
+        user_data.pop('exercises', None)
+        user_data['categories'] = nested_cats
+        all_cats = Category.query.all()
+
+        return { 
+            'user': user_data,
+            'categories': [c.to_dict() for c in all_cats]
             }, 200
-        return {'error': 'Unauthorized'}, 401
+
+            
+        #     user = User.query.get(user_id)
+        #     categories = Category.query.all()
+        #     raw_cats = user.categories
+        #     unique_cats = {c.id: c for c in raw_cats}.values()
+        #     user_cats = [c.to_dict() for c in unique_cats]
+        #     user_data = user.to_dict()
+        #     user_data['categories'] = user_cats
+        #     return {
+        #         'user': user_data,
+        #         'categories': [c.to_dict() for c in categories]
+        #     }, 200
+        # return {'error': 'Unauthorized'}, 401
     
 class Register(Resource):
     def post(self):

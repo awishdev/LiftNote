@@ -2,19 +2,28 @@
 import React, { useState } from 'react'
 import ExerciseCard from './ExerciseCard'
 
-export default function ExercisesPage({ cats, exerciseRecords, setExerciseRecords }) {
+export default function ExercisesPage({ cats, setCats }) {
   const [openCatId, setOpenCatId] = useState(null)
   //console.log('Exercise Records:', exerciseRecords)
-  // Handler to delete via API and update state
   const handleDelete = async (id) => {
-    await fetch(`/exercises/${id}`, {
-      method: 'DELETE',
-      credentials: 'include'
-    })
-    setExerciseRecords(prev => prev.filter(e => e.id !== id))
-  }
+  await fetch(`/exercises/${id}`, {
+    method: 'DELETE',
+    credentials: 'include'
+  })
 
-  // Handler to patch via API and update state
+  setCats(prevCats =>
+    prevCats
+      // use map to filter out the exercise
+      .map(cat => ({
+        ...cat,
+        exercises: cat.exercises.filter(ex => ex.id !== id)
+      }))
+      //filter empty cats
+      .filter(cat => cat.exercises.length > 0)
+  )
+}
+
+
   const handleEdit = async (id, updates) => {
     const res = await fetch(`/exercises/${id}`, {
       method: 'PATCH',
@@ -24,9 +33,21 @@ export default function ExercisesPage({ cats, exerciseRecords, setExerciseRecord
     })
     if (res.ok) {
       const edited = await res.json()
-      setExerciseRecords(prev =>
-        prev.map(e => (e.id === id ? edited : e))
-      )
+
+    setCats(prevCats =>
+      prevCats.map(cat => {
+      // if this category doesn’t contain our exercise, leave it untouched
+        if (!cat.exercises.some(ex => ex.id === id)) return cat
+
+        // otherwise, return a new category object with its exercises array updated
+        return {
+          ...cat,
+          exercises: cat.exercises.map(ex =>
+            ex.id === id ? edited : ex
+          )
+      }
+      })
+    )
     }
   }
 
@@ -34,7 +55,6 @@ export default function ExercisesPage({ cats, exerciseRecords, setExerciseRecord
     <div style={{ padding: '16px' }}>
       <h1>My Exercises</h1>
 
-      {/* Category selector */}
       <div style={{ marginBottom: '16px' }}>
         {cats.map(cat => (
           <button
@@ -46,7 +66,7 @@ export default function ExercisesPage({ cats, exerciseRecords, setExerciseRecord
               padding: '8px 16px',
               marginRight: '8px',
               backgroundColor: openCatId === cat.id ? '#007bff' : '#f0f0f0',
-              color: openCatId === cat.id ? '#fff'     : '#000',
+              color: openCatId === cat.id ? '#fff' : '#000',
               border: 'none',
               borderRadius: '4px',
               cursor: 'pointer'
@@ -56,14 +76,11 @@ export default function ExercisesPage({ cats, exerciseRecords, setExerciseRecord
           </button>
         ))}
       </div>
-
-      {/* Render only the open category’s exercises */}
       {cats.map(cat => {
         if (cat.id !== openCatId) return null
-        const myExs = exerciseRecords.filter(er => er.category_id === cat.id)
         return (
           <div key={cat.id}>
-            {myExs.map(ex => (
+            {cat.exercises.map(ex => (
               <ExerciseCard
                 key={ex.id}
                 exercise={ex}
@@ -76,4 +93,5 @@ export default function ExercisesPage({ cats, exerciseRecords, setExerciseRecord
       })}
     </div>
   )
+
 }

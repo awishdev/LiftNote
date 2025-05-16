@@ -13,7 +13,7 @@ import ExercisesPage from './ExercisesPage'
 import AddExercisePage from './AddExercisePage'
 
 export default function App() {
-  const [exercises, setExercises] = useState([])
+  //const [exercises, setExercises] = useState([])
   const [categories, setCategories] = useState([])
   const [userCategories, setUserCategories] = useState([])
   const [user, setUser] = useState(null)
@@ -22,7 +22,7 @@ export default function App() {
       .then(res => res.json())
       .then(data => { if (!data.error) {
         setUser(data);
-        setExercises(data.user.exercises);
+        //setExercises(data.user.exercises);
         setCategories(data.categories);
         setUserCategories(data.user.categories)
         //debugger;
@@ -34,25 +34,42 @@ export default function App() {
   function loginDataHandler(data) {
     console.log('User logged in:', data);
     setUser(data.user);
-    setExercises(data.user.exercises);
+    setUserCategories(data.user.categories);
     setCategories(data.categories);
     //debugger;
   }
 
   //add function to add a new exercise to state
-  function addExercise(newExercise) {
-    //console.log('Adding exercise:', newExercise)
-    
-    setExercises([...exercises, newExercise]);
+function addExercise(newExercise) {
 
-    const catObj = categories.find(c => c.id === newExercise.category_id )
+  setUserCategories(prevCats => {
+    // get the category object for the new exercise cat id
+    const catObj = categories.find(c => c.id === newExercise.category_id)
 
-    setUserCategories(prev => 
-    prev.some(c=>c.id===newExercise.category.id)
-      ? prev
-      : [...prev, catObj]
-    )
-  }
+    // check for category
+    const exists = prevCats.some(c => c.id === catObj.id)
+
+    if (exists) {
+      return prevCats.map(c =>
+        c.id === catObj.id
+          ? { 
+              ...c,
+              exercises: [...c.exercises, newExercise]
+            }
+          : c
+      )
+    } else {
+      // if new category, add it
+      return [
+        ...prevCats,
+        {
+          ...catObj,
+          exercises: [newExercise]
+        }
+      ]
+    }
+  })
+}
 
 
 
@@ -63,9 +80,8 @@ export default function App() {
             <NavBar onLogout={() => setUser(null)} />
             <Routes>
               <Route path="/" element={<CategoriesPage cats={categories} setCats={setCategories}/>} />
-              <Route path="/exercises" element={<ExercisesPage cats={userCategories} exerciseRecords={exercises} setExerciseRecords={setExercises}/>} />
+              <Route path="/exercises" element={<ExercisesPage cats={userCategories} setCats={setUserCategories}/*exerciseRecords={exercises} setExerciseRecords={setExercises}*//>} />
               <Route path="/add" element={<AddExercisePage cats={categories} onAdd={addExercise}/>} />
-              {/* catch‐all redirects back home */}
               <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>
           </>
@@ -74,7 +90,6 @@ export default function App() {
               path="/login"
               element={<LoginSignupPage onLogin={loginDataHandler} />}
             />
-            {/* any other path to login */}
             <Route path="*" element={<Navigate to="/login" replace />} />
           </Routes>
       }
